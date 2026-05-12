@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Laboratório Infinito: O Voo do Doutor</title>
+    <style>
+        body {
+            background-color: #050505;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+        }
+
+        #game-view {
+            position: relative;
+            width: 900px;
+            height: 600px;
+            border: 4px solid #00f0ff;
+            background-color: #000;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.2);
+        }
+
+        /* FUNDO INFINITO MODULAR */
+        #cenario-wrapper {
+            position: absolute;
+            display: flex;
+            width: 5400px; 
+            height: 100%;
+            animation: moverMundo 25s linear infinite;
+        }
+
+        .bloco-cenario {
+            width: 900px;
+            height: 100%;
+            background-size: cover;
+            image-rendering: pixelated;
+        }
+
+        @keyframes moverMundo {
+            from { transform: translateX(0); }
+            to { transform: translateX(-2700px); }
+        }
+
+        /* PERSONAGEM VOADOR - COM CORREÇÃO DE BORDA */
+        #personagem {
+            position: absolute;
+            width: 140px; 
+            height: 140px;
+            background-image: url('doutor.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            z-index: 10;
+            
+            /* --- CORREÇÃO DO BUG DA BORDA --- */
+            image-rendering: pixelated; /* Evita o desfoque suavizado */
+            filter: contrast(1.1) brightness(1.1); /* Melhora a definição das bordas */
+            /* -------------------------------- */
+            
+            left: 200px;
+            top: 230px;
+            animation: flutuarVoo 2s ease-in-out infinite alternate;
+            transition: transform 0.1s ease;
+        }
+
+        @keyframes flutuarVoo {
+            from { margin-top: 0px; }
+            to { margin-top: 20px; }
+        }
+
+        /* HUD APENAS COM AS SETAS */
+        .hud {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.85);
+            color: #00f0ff;
+            padding: 12px;
+            border: 1px solid #00f0ff;
+            z-index: 100;
+            font-size: 14px;
+            pointer-events: none;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-view">
+        <div class="hud">
+            CONTROLES: USE AS SETAS (↑ ↓ ← →)
+        </div>
+
+        <div id="cenario-wrapper">
+            <div class="bloco-cenario" style="background-image: url('cenario_A.png');"></div>
+            <div class="bloco-cenario" style="background-image: url('cenario_B.png');"></div>
+            <div class="bloco-cenario" style="background-image: url('cenario_C.png');"></div>
+            <div class="bloco-cenario" style="background-image: url('cenario_A.png');"></div>
+            <div class="bloco-cenario" style="background-image: url('cenario_B.png');"></div>
+            <div class="bloco-cenario" style="background-image: url('cenario_C.png');"></div>
+        </div>
+
+        <div id="personagem"></div>
+    </div>
+
+    <script>
+        const personagem = document.getElementById('personagem');
+        const velocidade = 25;
+        let posX = 200;
+        let posY = 230;
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp') posY -= velocidade;
+            if (e.key === 'ArrowDown') posY += velocidade;
+            if (e.key === 'ArrowRight') {
+                posX += velocidade;
+                personagem.style.transform = 'scaleX(1)'; 
+            }
+            if (e.key === 'ArrowLeft') {
+                posX -= velocidade;
+                personagem.style.transform = 'scaleX(-1)'; 
+            }
+
+            // Limites de tela
+            posY = Math.max(0, Math.min(460, posY));
+            posX = Math.max(0, Math.min(760, posX));
+
+            personagem.style.top = posY + 'px';
+            personagem.style.left = posX + 'px';
+        });
+    </script>
+</body>
+</html>

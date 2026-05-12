@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>BIOESFERA PROJECT - A Batalha Final</title>
+    <style>
+        body { background-color: #050505; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; font-family: 'Courier New', monospace; color: white; }
+        
+        #game-view { 
+            position: relative; width: 900px; height: 600px; 
+            border: 4px solid #00f0ff; background-color: #000; overflow: hidden;
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.3);
+        }
+
+        /* Telas de Overlay */
+        .overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 2000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; padding: 40px; box-sizing: border-box;
+        }
+        .bio-title { position: absolute; top: 30px; left: 30px; color: #00f0ff; font-size: 24px; font-weight: bold; opacity: 0.8; }
+        .creditos { position: absolute; bottom: 30px; left: 30px; color: rgba(255,255,255,0.5); font-size: 14px; }
+        
+        .overlay h2 { color: #f1c40f; margin-bottom: 20px; text-shadow: 0 0 10px #f1c40f; }
+        .overlay p { line-height: 1.6; max-width: 750px; margin-bottom: 30px; font-size: 17px; }
+        .btn-game { 
+            background: #00f0ff; color: #000; border: none; padding: 15px 40px; 
+            font-family: inherit; font-weight: bold; cursor: pointer; text-transform: uppercase;
+            box-shadow: 0 0 15px #00f0ff;
+        }
+
+        /* Personagens */
+        #personagem, #vilao { 
+            position: absolute; width: 140px; height: 140px; 
+            background-size: contain; background-repeat: no-repeat; background-position: center; 
+            z-index: 10; image-rendering: pixelated; transition: transform 0.1s;
+        }
+        #personagem { left: 50px; top: 230px; background-image: url('doutor.png'); }
+        #vilao { right: 50px; top: 230px; background-image: url('vilao.png'); }
+
+        /* Itens e Feitiços */
+        .poder-img, .pergaminho-img, .feitico-img { 
+            position: absolute; background-size: contain; background-repeat: no-repeat; 
+            z-index: 15; image-rendering: pixelated;
+        }
+        .poder-img { width: 45px; height: 45px; background-image: url('poder.png'); }
+        .pergaminho-img { width: 40px; height: 40px; background-image: url('pergaminho_item.png'); }
+        .feitico-img { width: 50px; height: 30px; background-image: url('feitico.png'); }
+
+        /* HUD */
+        .hud { 
+            position: absolute; top: 15px; left: 15px; right: 15px; 
+            display: flex; justify-content: space-between; z-index: 100; pointer-events: none; 
+        }
+        .stats-group { display: flex; gap: 10px; pointer-events: auto; }
+        .stats { background: rgba(0,0,0,0.85); padding: 8px 12px; border: 2px solid #00f0ff; font-size: 13px; font-weight: bold; }
+        .boss-bar { border-color: #ff4444; color: #ff4444; }
+        
+        /* Botão Pause Corrigido */
+        #btn-pause {
+            background: #00f0ff; color: #000; border: 2px solid #00f0ff;
+            padding: 8px 15px; cursor: pointer; font-family: inherit; font-weight: bold;
+            font-size: 13px; text-transform: uppercase; pointer-events: auto;
+        }
+
+        /* Animações */
+        .anim-mundo { animation: moverMundo 30s linear infinite; }
+        .anim-ia { animation: movimentoIA 3.5s ease-in-out infinite alternate; }
+        @keyframes movimentoIA { from { top: 30px; } to { top: 430px; } }
+        @keyframes moverMundo { from { transform: translateX(0); } to { transform: translateX(-2700px); } }
+
+        #cenario-wrapper { position: absolute; display: flex; width: 5400px; height: 100%; opacity: 0.6; }
+        .bloco-cenario { width: 900px; height: 100%; background-size: cover; image-rendering: pixelated; }
+    </style>
+</head>
+<body>
+
+    <div id="game-view">
+        <div id="tela-intro" class="overlay">
+            <div class="bio-title">BIOESFERA PROJECT</div>
+            <h2>MISSÃO: O RESGATE DAS ESCRITURAS</h2>
+            <p>O nefasto alienígena <b>Etix</b> saqueou os pergaminhos das escrituras sagradas de manter o equilíbrio natural para reverter tal poder com o objetivo destruir galáxias e universos! <br><br>
+               <b>COMANDOS:</b> Use as SETAS para voar e ESPAÇO para lançar feitiços.<br>
+               Recupere 25 pergaminhos ou destrua Etix para salvar o planeta!</p>
+            <button class="btn-game" onclick="iniciarJogo()">INICIAR PARTIDA</button>
+            <div class="creditos">Criado por: Barros AJS</div>
+        </div>
+
+        <div id="tela-fim" class="overlay" style="display:none;">
+            <h2 id="titulo-fim"></h2>
+            <p id="msg-fim"></p>
+            <button class="btn-game" onclick="location.reload()">JOGAR NOVAMENTE</button>
+        </div>
+
+        <div class="hud">
+            <div class="stats-group">
+                <div class="stats">YOU HP: <span id="vida" style="color:#ff4444">100</span>%</div>
+                <div class="stats">SEGREDOS: <span id="pontos" style="color:#f1c40f">0</span>/25</div>
+            </div>
+            <div class="stats-group">
+                <div class="stats boss-bar">ETIX HP: <span id="boss-hp">500</span>%</div>
+                <button id="btn-pause">PAUSE</button>
+            </div>
+        </div>
+
+        <div id="cenario-wrapper">
+            <div class="bloco-cenario" style="background-image: url('cenario_A.png');"></div>
+            <div class="bloco-cenario" style="background-image: url('cenario_B.png');"></div>
+            <div class="bloco-cenario" style="background-image: url('cenario_C.png');"></div>
+            <div class="bloco-cenario" style="background-image: url('cenario_A.png');"></div>
+            <div class="bloco-cenario" style="background-image: url('cenario_B.png');"></div>
+            <div class="bloco-cenario" style="background-image: url('cenario_C.png');"></div>
+        </div>
+
+        <div id="personagem"></div>
+        <div id="vilao"></div>
+    </div>
+
+    <audio id="musica" src="musica_fundo.mp3" loop></audio>
+    <audio id="somDano" src="dano.mp3"></audio>
+    <audio id="somColeta" src="coleta.mp3"></audio>
+    <audio id="somFeitico" src="poder.mp3"></audio>
+    <audio id="somDanoVilao" src="dano_vilao.mp3"></audio>
+
+    <script>
+        const p = document.getElementById('personagem');
+        const v = document.getElementById('vilao');
+        const tela = document.getElementById('game-view');
+        const wrapper = document.getElementById('cenario-wrapper');
+        const btnP = document.getElementById('btn-pause');
+        const m = document.getElementById('musica');
+        
+        let pX = 50, pY = 230, hp = 100, score = 0, bHp = 500, ativo = false;
+        let timerAtack;
+
+        function iniciarJogo() {
+            document.getElementById('tela-intro').style.display = 'none';
+            ativo = true;
+            wrapper.classList.add('anim-mundo');
+            v.classList.add('anim-ia');
+            m.play().catch(() => console.log("Áudio aguardando interação"));
+            timerAtack = setInterval(ataqueInimigo, 900);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (!ativo) return;
+            const step = 35;
+            if (e.key === 'ArrowUp') pY -= step;
+            if (e.key === 'ArrowDown') pY += step;
+            if (e.key === 'ArrowLeft') { pX -= step; p.style.transform = 'scaleX(-1)'; }
+            if (e.key === 'ArrowRight') { pX += step; p.style.transform = 'scaleX(1)'; }
+            if (e.key === ' ') lancarFeitico();
+
+            pX = Math.max(0, Math.min(380, pX));
+            pY = Math.max(0, Math.min(460, pY));
+            p.style.left = pX + 'px'; p.style.top = pY + 'px';
+        });
+
+        function lancarFeitico() {
+            const sF = document.getElementById('somFeitico');
+            sF.currentTime = 0; sF.play();
+            const f = document.createElement('div');
+            f.className = 'feitico-img';
+            f.style.left = (pX + 100) + 'px'; f.style.top = (pY + 60) + 'px';
+            tela.appendChild(f);
+
+            let fPos = pX + 100;
+            const moveF = setInterval(() => {
+                if(!ativo) { f.remove(); clearInterval(moveF); return; }
+                fPos += 12; f.style.left = fPos + 'px';
+                if (checarColisao(f, v)) {
+                    bHp -= 10; document.getElementById('boss-hp').innerText = bHp;
+                    document.getElementById('somDanoVilao').play();
+                    if(bHp <= 0) finalizar(true, "Você destruiu Etix e salvou o universo!");
+                    f.remove(); clearInterval(moveF);
+                }
+                if (fPos > 950) { f.remove(); clearInterval(moveF); }
+            }, 20);
+        }
+
+        function ataqueInimigo() {
+            if (!ativo) return;
+            const tipo = Math.random() > 0.4 ? 'poder-img' : 'pergaminho-img';
+            const obj = document.createElement('div');
+            obj.className = tipo;
+            obj.style.top = (v.offsetTop + 40) + 'px'; obj.style.left = (v.offsetLeft) + 'px';
+            tela.appendChild(obj);
+
+            let hPos = v.offsetLeft;
+            const move = setInterval(() => {
+                if (!ativo) { obj.remove(); clearInterval(move); return; }
+                hPos -= 9; obj.style.left = hPos + 'px';
+                
+                if (checarColisao(p, obj, 15)) {
+                    if (tipo === 'poder-img') {
+                        hp -= 10; document.getElementById('vida').innerText = hp;
+                        document.getElementById('somDano').play();
+                        if (hp <= 0) finalizar(false, "Etix triunfou sobre o Bruxo Felício...");
+                    } else {
+                        score++; document.getElementById('pontos').innerText = score;
+                        const sC = document.getElementById('somColeta');
+                        sC.currentTime = 0; sC.play();
+                        if(score >= 25) finalizar(true, "Você reuniu as Escrituras Sagradas!");
+                    }
+                    obj.remove(); clearInterval(move);
+                }
+                if (hPos < -50) { obj.remove(); clearInterval(move); }
+            }, 20);
+        }
+
+        btnP.addEventListener('click', () => {
+            if (ativo) {
+                ativo = false; btnP.innerText = 'PLAY';
+                wrapper.style.animationPlayState = 'paused'; v.style.animationPlayState = 'paused';
+                m.pause();
+            } else {
+                ativo = true; btnP.innerText = 'PAUSE';
+                wrapper.style.animationPlayState = 'running'; v.style.animationPlayState = 'running';
+                m.play();
+            }
+        });
+
+        function checarColisao(a, b, margem = 0) {
+            const rA = a.getBoundingClientRect(); const rB = b.getBoundingClientRect();
+            return !(rA.right - margem < rB.left + margem || rA.left + margem > rB.right - margem || 
+                     rA.bottom - margem < rB.top + margem || rA.top + margem > rB.bottom - margem);
+        }
+
+        function finalizar(venceu, msg) {
+            ativo = false; clearInterval(timerAtack);
+            document.getElementById('tela-fim').style.display = 'flex';
+            document.getElementById('titulo-fim').innerText = venceu ? "MISSÃO CUMPRIDA!" : "GAME OVER";
+            document.getElementById('msg-fim').innerText = msg;
+        }
+    </script>
+</body>
+</html>

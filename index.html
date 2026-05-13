@@ -8,34 +8,31 @@
         body { background-color: #050505; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; font-family: 'Courier New', monospace; color: white; touch-action: none; }
         #game-view { position: relative; width: 900px; height: 600px; border: 4px solid #00f0ff; background-color: #000; overflow: hidden; box-shadow: 0 0 50px rgba(0, 240, 255, 0.3); max-width: 100vw; max-height: 66.67vw; }
 
-        /* CORREÇÃO DO FEITIÇO: background-repeat: no-repeat impede a duplicação */
-        .feitico-img { 
-            width: 50px; height: 30px; 
-            background-image: url('feitico.png'); 
-            background-size: contain; 
-            background-repeat: no-repeat; /* ESSENCIAL */
-            background-position: center;
-            position: absolute; 
-            z-index: 5;
-        }
+        /* HUD ESTILO STREET FIGHTER */
+        .hud { position: absolute; top: 15px; left: 10px; right: 10px; display: flex; justify-content: space-between; z-index: 100; pointer-events: none; }
+        .char-profile { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.6); padding: 5px; border-radius: 5px; }
+        .head-icon { width: 50px; height: 50px; border: 2px solid #fff; background-size: cover; image-rendering: pixelated; }
+        .stats { padding: 5px 10px; border: 2px solid #00f0ff; font-size: 14px; font-weight: bold; min-width: 120px; }
 
-        /* Restante do CSS mantido conforme a versão estável anterior */
-        #joystick-base { position: absolute; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border: 2px solid rgba(0,240,255,0.5); border-radius: 50%; display: none; z-index: 3000; }
-        #joystick-stick { position: absolute; width: 40px; height: 40px; background: #00f0ff; border-radius: 50%; top: 30px; left: 30px; box-shadow: 0 0 10px #00f0ff; }
-        #btn-attack-mobile { position: absolute; bottom: 40px; right: 40px; width: 80px; height: 80px; background: rgba(255, 68, 68, 0.4); border: 3px solid #ff4444; border-radius: 50%; z-index: 3000; display: none; justify-content: center; align-items: center; font-weight: bold; pointer-events: auto; }
-        .is-touch #btn-attack-mobile, .is-touch #joystick-base { display: flex; }
+        /* TELA INICIAL REORGANIZADA */
+        .capinha-game { width: 300px; height: auto; margin-bottom: 10px; }
         .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 4000; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; box-sizing: border-box; }
-        .btn-game { background: #00f0ff; color: #000; border: none; padding: 15px 40px; font-family: inherit; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .creditos-footer { margin-top: 20px; font-size: 14px; color: #f1c40f; font-weight: bold; }
+
+        /* FEITIÇO SEM RESÍDUO */
+        .feitico-img { width: 50px; height: 30px; background-image: url('feitico.png'); background-size: contain; background-repeat: no-repeat; background-position: center; position: absolute; z-index: 5; }
+
+        /* OUTROS ELEMENTOS */
+        .btn-game { background: #00f0ff; color: #000; border: none; padding: 15px 40px; font-family: inherit; font-weight: bold; cursor: pointer; text-transform: uppercase; margin: 15px; }
         #personagem, #vilao { position: absolute; width: 140px; height: 140px; background-size: contain; background-repeat: no-repeat; background-position: center; z-index: 10; image-rendering: pixelated; }
         #personagem { left: 50px; top: 230px; background-image: url('doutor.png'); }
         #vilao { right: 50px; top: 230px; background-image: url('vilao.png'); }
-        .poder-img { width: 45px; height: 45px; background-image: url('poder.png'); position: absolute; background-size: contain; }
-        .pergaminho-img { width: 40px; height: 40px; background-image: url('pergaminho_item.png'); position: absolute; background-size: contain; }
-        .hud { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; justify-content: space-between; z-index: 100; pointer-events: none; }
-        .stats { background: rgba(0,0,0,0.85); padding: 5px 10px; border: 2px solid #00f0ff; font-size: 11px; }
-        #btn-pause { background: #00f0ff; color: #000; border: none; padding: 5px 10px; font-family: inherit; font-weight: bold; pointer-events: auto; }
+        #joystick-base { position: absolute; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border: 2px solid rgba(0,240,255,0.5); border-radius: 50%; display: none; z-index: 3000; }
+        #joystick-stick { position: absolute; width: 40px; height: 40px; background: #00f0ff; border-radius: 50%; top: 30px; left: 30px; }
+        #btn-attack-mobile { position: absolute; bottom: 40px; right: 40px; width: 80px; height: 80px; background: rgba(255, 68, 68, 0.4); border: 3px solid #ff4444; border-radius: 50%; z-index: 3000; display: none; justify-content: center; align-items: center; font-weight: bold; }
+        .is-touch #btn-attack-mobile, .is-touch #joystick-base { display: flex; }
         #cenario-wrapper { position: absolute; display: flex; width: 5400px; height: 100%; opacity: 0.6; }
-        .bloco-cenario { width: 900px; height: 100%; background-size: cover; image-rendering: pixelated; }
+        .bloco-cenario { width: 900px; height: 100%; background-size: cover; }
         .anim-mundo { animation: moverMundo 30s linear infinite; }
         .anim-ia { animation: movimentoIA 3.5s ease-in-out infinite alternate; }
         @keyframes movimentoIA { from { top: 30px; } to { top: 430px; } }
@@ -46,22 +43,21 @@
 
     <div id="game-view">
         <div id="tela-intro" class="overlay">
-            <h2 style="color: #f1c40f;">O GUARDIÃO DAS ESCRITURAS</h2>
-            <p>Etix roubou as escrituras! Use WASD/Setas ou Joystick.<br>Pressione JOGAR para ativar o áudio.</p>
-            <button class="btn-game" id="start-btn">INICIAR PARTIDA</button>
-        </div>
-
-        <div id="tela-fim" class="overlay" style="display:none;">
-            <h2 id="titulo-fim"></h2>
-            <button class="btn-game" onclick="location.reload()">REPETIR</button>
+            <img src="capinha.png" alt="Capa Missão" class="capinha-game">
+            <p style="max-width: 600px;">O nefasto Etix saqueou as escrituras sagradas! <br> Ajude o Bruxo Felício na Jornada pelo Equilíbrio.</p>
+            <button class="btn-game" id="start-btn">INICIAR MISSÃO</button>
+            <div class="creditos-footer">CRIADO POR: BARROS AJS</div>
         </div>
 
         <div class="hud">
-            <div style="display:flex; gap:5px;">
-                <div class="stats">HP: <span id="vida">100</span>%</div>
-                <div class="stats">DOCS: <span id="pontos">0</span>/25</div>
+            <div class="char-profile">
+                <div class="head-icon" style="background-image: url('cabeca_heroi.png');"></div>
+                <div class="stats">YOU: <span id="vida" style="color:#0f0">100</span>%</div>
             </div>
-            <button id="btn-pause">PAUSE</button>
+            <div class="char-profile">
+                <div class="stats" style="border-color:#f44; text-align:right;">ETIX: <span id="boss-hp" style="color:#f44">2500</span></div>
+                <div class="head-icon" style="background-image: url('cabeca_vilao.png'); border-color: #f44;"></div>
+            </div>
         </div>
 
         <div id="joystick-base"><div id="joystick-stick"></div></div>
@@ -81,14 +77,15 @@
     </div>
 
     <script>
-        // SISTEMA DE ÁUDIO CORRIGIDO
+        // CONFIGURAÇÃO DE SONS (NOMES IGUAIS À SUA LISTA)
         const sons = {
-            tema: new Audio('tema.mp3'),
-            feitico: new Audio('feitico.mp3'),
-            dano: new Audio('dano.mp3'),
-            item: new Audio('item.mp3')
+            fundo: new Audio('musica_fundo.mp3'),
+            poder: new Audio('poder.mp3'), // Som do feitiço do herói
+            dano: new Audio('dano.mp3'), // Dano no herói
+            item: new Audio('coleta.mp3'),
+            dano_v: new Audio('dano_vilao.mp3') // Dano no vilão
         };
-        sons.tema.loop = true;
+        sons.fundo.loop = true;
 
         const p = document.getElementById('personagem');
         const v = document.getElementById('vilao');
@@ -101,11 +98,10 @@
         let pX = 50, pY = 230, hp = 100, score = 0, bHp = 2500, ativo = false, pausado = false;
         let moveX = 0, moveY = 0;
 
-        // Função para destravar o áudio no primeiro clique
         function iniciarJogo() {
-            // Tenta dar play no som. O navegador permite agora porque houve o clique no botão.
+            // Ativa todos os sons
             Object.values(sons).forEach(s => { s.play().then(() => { s.pause(); s.currentTime = 0; }).catch(() => {}); });
-            sons.tema.play();
+            sons.fundo.play();
 
             document.getElementById('tela-intro').style.display = 'none';
             ativo = true;
@@ -117,54 +113,43 @@
 
         document.getElementById('start-btn').addEventListener('click', iniciarJogo);
 
-        // Joystick e Controles...
+        // MOVIMENTAÇÃO (JOYSTICK + WASD/SETAS)
         view.addEventListener('touchstart', (e) => {
-            if (!ativo || pausado) return;
-            const touch = e.touches[0];
-            const rect = view.getBoundingClientRect();
-            const x = touch.clientX - rect.left;
-            const y = touch.clientY - rect.top;
-            if (x < rect.width / 2) {
-                base.style.display = 'block'; base.style.left = (x - 50) + 'px'; base.style.top = (y - 50) + 'px';
-            }
+            if (!ativo) return;
+            const t = e.touches[0]; const r = view.getBoundingClientRect();
+            const x = t.clientX - r.left; const y = t.clientY - r.top;
+            if (x < r.width / 2) { base.style.display = 'block'; base.style.left = (x - 50) + 'px'; base.style.top = (y - 50) + 'px'; }
         });
 
         view.addEventListener('touchmove', (e) => {
-            if (!ativo || pausado) return;
-            const touch = e.touches[0];
-            const rect = view.getBoundingClientRect();
-            const bRect = base.getBoundingClientRect();
-            const centerX = bRect.left + 50 - rect.left;
-            const centerY = bRect.top + 50 - rect.top;
-            let dx = (touch.clientX - rect.left) - centerX;
-            let dy = (touch.clientY - rect.top) - centerY;
-            const dist = Math.sqrt(dx*dx + dy*dy);
-            const maxDist = 40;
-            if (dist > maxDist) { dx *= maxDist / dist; dy *= maxDist / dist; }
+            if (!ativo) return;
+            const t = e.touches[0]; const r = view.getBoundingClientRect(); const bR = base.getBoundingClientRect();
+            const cX = bR.left + 50 - r.left; const cY = bR.top + 50 - r.top;
+            let dx = (t.clientX - r.left) - cX; let dy = (t.clientY - r.top) - cY;
+            const d = Math.sqrt(dx*dx + dy*dy); const max = 40;
+            if (d > max) { dx *= max/d; dy *= max/d; }
             stick.style.transform = `translate(${dx}px, ${dy}px)`;
-            moveX = dx / maxDist; moveY = dy / maxDist;
+            moveX = dx/max; moveY = dy/max;
         });
 
-        view.addEventListener('touchend', () => { base.style.display = 'none'; stick.style.transform = `translate(0,0)`; moveX = 0; moveY = 0; });
+        view.addEventListener('touchend', () => { base.style.display = 'none'; moveX = 0; moveY = 0; });
         btnAtk.addEventListener('touchstart', (e) => { e.preventDefault(); lancarFeitico(); });
 
         function lancarFeitico() {
             if (!ativo || pausado) return;
-            // Som do feitiço
-            sons.feitico.currentTime = 0;
-            sons.feitico.play();
-
+            sons.poder.currentTime = 0; sons.poder.play();
             const f = document.createElement('div');
             f.className = 'feitico-img';
             f.style.left = (pX + 110) + 'px'; f.style.top = (pY + 60) + 'px';
             view.appendChild(f);
             let fPos = pX + 110;
             const mF = setInterval(() => {
-                if (pausado) return;
                 fPos += 15; f.style.left = fPos + 'px';
                 if (checarColisao(f, v)) {
-                    bHp -= 10; f.remove(); clearInterval(mF);
-                    if(bHp <= 0) finalizar(true, "VENCEU!");
+                    sons.dano_v.play();
+                    bHp -= 10; document.getElementById('boss-hp').innerText = bHp;
+                    f.remove(); clearInterval(mF);
+                    if(bHp <= 0) alert("VITÓRIA!");
                 }
                 if (fPos > 900) { f.remove(); clearInterval(mF); }
             }, 20);
@@ -174,23 +159,14 @@
             if (!ativo || pausado) return;
             const tipo = Math.random() > 0.4 ? 'poder-img' : 'pergaminho-img';
             const o = document.createElement('div');
-            o.className = tipo;
-            o.style.top = (v.offsetTop + 50) + 'px'; o.style.left = '800px';
+            o.className = tipo; o.style.top = (v.offsetTop + 50) + 'px'; o.style.left = '800px';
             view.appendChild(o);
             let oX = 800;
             const mO = setInterval(() => {
-                if (pausado) return;
                 oX -= 8; o.style.left = oX + 'px';
                 if (checarColisao(p, o, 15)) {
-                    if (tipo === 'poder-img') {
-                        sons.dano.play();
-                        hp -= 5; document.getElementById('vida').innerText = hp;
-                        if (hp <= 0) finalizar(false, "FIM DE JOGO");
-                    } else {
-                        sons.item.play();
-                        score++; document.getElementById('pontos').innerText = score;
-                        if (score >= 25) finalizar(true, "VITÓRIA!");
-                    }
+                    if (tipo === 'poder-img') { sons.dano.play(); hp -= 5; document.getElementById('vida').innerText = hp; }
+                    else { sons.item.play(); score++; }
                     o.remove(); clearInterval(mO);
                 }
                 if (oX < -50) { o.remove(); clearInterval(mO); }
@@ -213,9 +189,7 @@
             return !(rA.right-m < rB.left+m || rA.left+m > rB.right-m || rA.bottom-m < rB.top+m || rA.top+m > rB.bottom-m);
         }
 
-        function finalizar(v, msg) { ativo = false; document.getElementById('tela-fim').style.display = 'flex'; document.getElementById('titulo-fim').innerText = msg; sons.tema.pause(); }
-
-        // Suporte Teclado (Arrows + WASD)
+        // TECLADO WASD + SETAS
         document.addEventListener('keydown', (e) => {
             const k = e.key.toLowerCase();
             if (k === 'arrowup' || k === 'w') moveY = -1;
@@ -228,13 +202,6 @@
             const k = e.key.toLowerCase();
             if (['arrowup','arrowdown','w','s'].includes(k)) moveY = 0;
             if (['arrowleft','arrowright','a','d'].includes(k)) moveX = 0;
-        });
-
-        document.getElementById('btn-pause').addEventListener('click', () => {
-            pausado = !pausado;
-            document.getElementById('btn-pause').innerText = pausado ? 'PLAY' : 'PAUSE';
-            wrapper.style.animationPlayState = pausado ? 'paused' : 'running';
-            v.style.animationPlayState = pausado ? 'paused' : 'running';
         });
     </script>
 </body>

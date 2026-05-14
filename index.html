@@ -7,11 +7,10 @@
     <style>
         body { background-color: #000; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; font-family: 'Courier New', monospace; color: white; }
         
-        /* CONTAINER 16:9 RESPONSIVO */
         #game-view { 
             position: relative; 
             width: 100vw; 
-            height: 56.25vw; /* Proporção 16:9 */
+            height: 56.25vw; 
             max-width: 1066px; 
             max-height: 600px;
             background-color: #000; 
@@ -20,25 +19,30 @@
             box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
         }
 
-        /* TELA DE INTRODUÇÃO REFORMULADA */
+        /* TELA DE INTRODUÇÃO */
         .overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.95); z-index: 5000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
-        .capinha-game { width: 380px; max-width: 80%; height: auto; filter: drop-shadow(0 0 10px #00f0ff); margin-bottom: 20px; }
-        .historia-texto { font-size: 14px; line-height: 1.4; max-width: 700px; color: #e0e0e0; margin-bottom: 15px; }
-        .comandos-box { background: rgba(0, 240, 255, 0.1); border: 1px solid #00f0ff; padding: 10px; font-size: 12px; margin-bottom: 20px; width: 80%; }
-        .creditos { color: #f1c40f; font-weight: bold; font-size: 14px; margin-top: 15px; text-transform: uppercase; }
-        .btn-game { background: #00f0ff; color: #000; border: none; padding: 15px 50px; font-weight: bold; cursor: pointer; font-size: 18px; transition: 0.3s; }
-        .btn-game:hover { transform: scale(1.1); background: #fff; }
+        .capinha-game { width: 400px; max-width: 85%; height: auto; filter: drop-shadow(0 0 10px #00f0ff); margin-bottom: 20px; }
+        .historia-texto { font-size: 14px; line-height: 1.4; max-width: 750px; color: #e0e0e0; margin-bottom: 15px; }
+        .comandos-box { background: rgba(0, 240, 255, 0.1); border: 1px solid #00f0ff; padding: 10px; font-size: 12px; margin-bottom: 20px; width: 85%; }
+        .btn-game { background: #00f0ff; color: #000; border: none; padding: 15px 50px; font-weight: bold; cursor: pointer; font-size: 18px; transition: 0.3s; text-transform: uppercase; }
+        .btn-game:hover { transform: scale(1.05); background: #fff; }
 
-        /* HUD STREET FIGHTER */
-        .hud { position: absolute; top: 10px; width: 100%; display: flex; justify-content: space-between; padding: 0 20px; box-sizing: border-box; z-index: 100; pointer-events: none; }
-        .char-profile { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 4px; border: 1px solid rgba(0,240,255,0.3); }
+        /* HUD - ESTILO LUTA E CONTROLE CENTRAL */
+        .hud { position: absolute; top: 10px; width: 100%; display: flex; justify-content: space-between; align-items: flex-start; padding: 0 20px; box-sizing: border-box; z-index: 100; pointer-events: none; }
+        .char-profile { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.6); padding: 5px 15px; border: 1px solid rgba(0,240,255,0.3); }
         .head-icon { width: 45px; height: 45px; border: 2px solid #fff; background-size: cover; image-rendering: pixelated; }
-        .stats { font-size: 16px; font-weight: bold; }
+        
+        /* BOTÕES CENTRAIS SUPERIORES */
+        .central-controls { display: flex; flex-direction: column; gap: 8px; pointer-events: auto; }
+        .btn-ctrl { background: #00f0ff; color: #000; border: none; padding: 5px 15px; font-family: inherit; font-weight: bold; cursor: pointer; font-size: 11px; text-transform: uppercase; }
 
-        /* CONTROLES MOBILE ALINHADOS */
-        #joystick-base { position: absolute; bottom: 30px; left: 50px; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border: 2px solid #00f0ff; border-radius: 50%; display: none; z-index: 4000; }
+        /* CONTADOR DE PERGAMINHOS (JANELINHA) */
+        .contador-coleta { position: absolute; top: 75px; left: 50%; transform: translateX(-50%); background: rgba(241, 196, 15, 0.2); border: 1px solid #f1c40f; padding: 4px 12px; font-size: 14px; font-weight: bold; color: #f1c40f; z-index: 90; }
+
+        /* CONTROLES MOBILE */
+        #joystick-base { position: absolute; bottom: 35px; left: 50px; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border: 2px solid #00f0ff; border-radius: 50%; display: none; z-index: 4000; }
         #joystick-stick { position: absolute; width: 40px; height: 40px; background: #00f0ff; border-radius: 50%; top: 30px; left: 30px; }
-        #btn-attack-mobile { position: absolute; bottom: 40px; right: 50px; width: 80px; height: 80px; background: rgba(255, 68, 68, 0.4); border: 3px solid #ff4444; border-radius: 50%; display: none; z-index: 4000; justify-content: center; align-items: center; font-weight: bold; font-size: 12px; }
+        #btn-attack-mobile { position: absolute; bottom: 45px; right: 50px; width: 80px; height: 80px; background: rgba(255, 68, 68, 0.4); border: 3px solid #ff4444; border-radius: 50%; display: none; z-index: 4000; justify-content: center; align-items: center; font-weight: bold; }
         .is-touch #btn-attack-mobile, .is-touch #joystick-base { display: flex; }
 
         /* ELEMENTOS DO JOGO */
@@ -63,14 +67,14 @@
         <div id="tela-intro" class="overlay">
             <img src="capinha.png" class="capinha-game">
             <div class="historia-texto">
-                O nefasto alienígena <strong>Etix</strong> saqueou os pergaminhos das escrituras sagradas de manter o equilíbrio natural para reverter tal poder com o objetivo destruir galáxias e universos!
+                O nefasto alienígena <strong>Etix</strong> saqueou os pergaminhos das escrituras sagradas para destruir o equilíbrio do universo!
             </div>
             <div class="comandos-box">
-                COMANDOS: Use as SETAS (ou Joystick) para voar e ESPAÇO (ou Botão) para feitiços.<br>
-                <strong>MISSÃO:</strong> Recupere 25 pergaminhos ou destrua Etix (2500 HP)!
+                COMANDOS: SETAS ou WASD para voar | ESPAÇO para feitiços.<br>
+                Recupere <strong>25 pergaminhos</strong> ou destrua Etix (2500 HP)!
             </div>
             <button class="btn-game" onclick="iniciarJogo()">INICIAR MISSÃO</button>
-            <div class="creditos">DESENVOLVIDO POR: BARROS AJS</div>
+            <p style="color: #f1c40f; font-weight: bold; margin-top: 15px;">DESENVOLVIDO POR: BARROS AJS</p>
         </div>
 
         <div class="hud">
@@ -78,11 +82,19 @@
                 <div class="head-icon" style="background-image: url('cabeca_heroi.png');"></div>
                 <div class="stats">HP: <span id="vida" style="color:#0f0">100</span>%</div>
             </div>
+
+            <div class="central-controls">
+                <button class="btn-ctrl" id="toggle-music">MÚSICA: OFF</button>
+                <button class="btn-ctrl" id="btn-pause">PAUSE</button>
+            </div>
+
             <div class="char-profile">
                 <div class="stats" style="border-color:#f44">ETIX: <span id="boss-hp" style="color:#f44">2500</span></div>
                 <div class="head-icon" style="background-image: url('cabeca_vilao.png'); border-color:#f44;"></div>
             </div>
         </div>
+
+        <div class="contador-coleta">PERGAMINHOS: <span id="score-val">0</span>/25</div>
 
         <div id="joystick-base"><div id="joystick-stick"></div></div>
         <div id="btn-attack-mobile">POW!</div>
@@ -108,13 +120,17 @@
         };
         audio.fundo.loop = true;
 
-        let pX = 50, pY = 220, hp = 100, score = 0, bHp = 2500, ativo = false, moveX = 0, moveY = 0;
-        const p = document.getElementById('personagem'), v = document.getElementById('vilao');
-        const view = document.getElementById('game-view');
+        let pX = 50, pY = 220, hp = 100, score = 0, bHp = 2500, ativo = false, pausado = false, moveX = 0, moveY = 0;
+        const p = document.getElementById('personagem'), v = document.getElementById('vilao'), view = document.getElementById('game-view');
+
+        // FUNÇÃO DE SOM SEM ATRASO
+        function tocarSom(som) {
+            som.pause();
+            som.currentTime = 0;
+            som.play().catch(() => {});
+        }
 
         function iniciarJogo() {
-            Object.values(audio).forEach(a => { a.play().then(() => a.pause()).catch(() => {}); });
-            audio.fundo.play();
             document.getElementById('tela-intro').style.display = 'none';
             ativo = true;
             document.getElementById('cenario-wrapper').classList.add('anim-mundo');
@@ -124,7 +140,7 @@
         }
 
         function ataqueEtix() {
-            if (!ativo) return;
+            if (!ativo || pausado) return;
             const item = Math.random() > 0.4 ? 'poder-img' : 'pergaminho-img';
             const o = document.createElement('div');
             o.className = item;
@@ -134,11 +150,17 @@
 
             let oX = 900;
             const moveO = setInterval(() => {
-                if (!ativo) { o.remove(); clearInterval(moveO); return; }
+                if (!ativo || pausado) { if(!pausado) o.remove(); return; }
                 oX -= 9; o.style.left = oX + 'px';
                 if (checarColisao(p, o, 20)) {
-                    if (item === 'poder-img') { audio.dano.play(); hp -= 5; document.getElementById('vida').innerText = hp; }
-                    else { audio.item.play(); score++; bHp -= 20; document.getElementById('boss-hp').innerText = bHp; }
+                    if (item === 'poder-img') { tocarSom(audio.dano); hp -= 5; document.getElementById('vida').innerText = hp; }
+                    else { 
+                        tocarSom(audio.item); 
+                        score++; 
+                        document.getElementById('score-val').innerText = score;
+                        bHp -= 15; 
+                        document.getElementById('boss-hp').innerText = bHp; 
+                    }
                     o.remove(); clearInterval(moveO);
                 }
                 if (oX < -50) { o.remove(); clearInterval(moveO); }
@@ -146,17 +168,18 @@
         }
 
         function lancarFeitico() {
-            if (!ativo) return;
-            audio.poder.currentTime = 0; audio.poder.play();
+            if (!ativo || pausado) return;
+            tocarSom(audio.poder);
             const f = document.createElement('div');
             f.className = 'feitico-img';
             f.style.left = (pX + 110) + 'px'; f.style.top = (pY + 60) + 'px';
             view.appendChild(f);
             let fX = pX + 110;
             const moveF = setInterval(() => {
+                if(pausado) return;
                 fX += 15; f.style.left = fX + 'px';
                 if (checarColisao(f, v, 10)) {
-                    audio.dano_v.play(); bHp -= 10;
+                    tocarSom(audio.dano_v); bHp -= 10;
                     document.getElementById('boss-hp').innerText = bHp;
                     f.remove(); clearInterval(moveF);
                 }
@@ -164,18 +187,33 @@
             }, 20);
         }
 
-        // CONTROLES MOBILE JOYSTICK FIXO
-        view.addEventListener('touchstart', (e) => {
-            if (ativo && e.touches[0].clientX < view.offsetWidth / 2) {
-                document.getElementById('joystick-base').style.display = 'block';
+        // CONTROLES DE HUD
+        document.getElementById('toggle-music').addEventListener('click', function() {
+            if (audio.fundo.paused) {
+                audio.fundo.play();
+                this.innerText = "MÚSICA: ON";
+            } else {
+                audio.fundo.pause();
+                this.innerText = "MÚSICA: OFF";
             }
         });
 
+        document.getElementById('btn-pause').addEventListener('click', function() {
+            pausado = !pausado;
+            this.innerText = pausado ? "RESUME" : "PAUSE";
+            document.getElementById('cenario-wrapper').style.animationPlayState = pausado ? 'paused' : 'running';
+            v.style.animationPlayState = pausado ? 'paused' : 'running';
+        });
+
+        // JOYSTICK E MOVIMENTAÇÃO
+        view.addEventListener('touchstart', (e) => {
+            if (ativo && e.touches[0].clientX < view.offsetWidth / 2) document.getElementById('joystick-base').style.display = 'block';
+        });
+
         view.addEventListener('touchmove', (e) => {
-            if (!ativo) return;
+            if (!ativo || pausado) return;
             const t = e.touches[0]; const b = document.getElementById('joystick-base').getBoundingClientRect();
-            const cX = b.left + 50, cY = b.top + 50;
-            let dx = t.clientX - cX, dy = t.clientY - cY;
+            let dx = t.clientX - (b.left + 50), dy = t.clientY - (b.top + 50);
             const dist = Math.sqrt(dx*dx + dy*dy);
             if (dist > 40) { dx *= 40/dist; dy *= 40/dist; }
             document.getElementById('joystick-stick').style.transform = `translate(${dx}px, ${dy}px)`;
@@ -186,12 +224,12 @@
         document.getElementById('btn-attack-mobile').addEventListener('touchstart', (e) => { e.preventDefault(); lancarFeitico(); });
 
         function gameLoop() {
-            if (ativo) {
+            if (ativo && !pausado) {
                 pX += moveX * 8; pY += moveY * 8;
                 pX = Math.max(0, Math.min(450, pX)); pY = Math.max(0, Math.min(450, pY));
                 p.style.left = pX + 'px'; p.style.top = pY + 'px';
-                if (hp <= 0) { alert("O Planeta foi destruído!"); location.reload(); }
-                if (bHp <= 0) { alert("ETIX DERROTADO! Você salvou o Universo!"); location.reload(); }
+                if (hp <= 0) { alert("Fim de Jogo! Etix venceu."); location.reload(); }
+                if (score >= 25 || bHp <= 0) { alert("VITÓRIA! O universo está a salvo."); location.reload(); }
             }
             requestAnimationFrame(gameLoop);
         }
